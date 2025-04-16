@@ -55,4 +55,49 @@ class Authentication extends StatelessWidget {
   }
 }
 
+class LoginScreen extends StatefulWidget {
+  @override
+  State<LoginScreen> createState() => LoginScreenState();
+}
 
+class LoginScreenState extends State<LoginScreen> {
+  final email = TextEditingController();
+  final password = TextEditingController();
+  final loggedIn = true;
+  final firstName = TextEditingController();
+  final lastName = TextEditingController();
+
+  Future<void> login() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.text.trim(),
+        password: password.text.trim(),
+      );
+    } catch (e) {
+      showError(e.toString());
+    }
+  }
+
+  Future<void> makeAccount() async {
+    try {
+      final userLogin = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: email.text.trim(),
+            password: password.text.trim(),
+          );
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userLogin.user!.uid)
+          .set({
+            'first_name': firstName.text.trim(),
+            'last_name': lastName.text.trim(),
+            'role': 'student',
+            'registered_at': Timestamp.now(),
+          });
+    } catch (e) {
+      showError(e.toString()); 
+    }
+  }
+
+  
+}
