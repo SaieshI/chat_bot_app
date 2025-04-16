@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "620863652482",
+    "project_id": "chat-bot-app-510f4",
+    "storage_bucket": "chat-bot-app-510f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620863652482:android:fba886812785052b24ea9b",
+        "android_client_info": {
+          "package_name": "com.example.chat_bot_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVRZ5YhTr8d8KF8cvtXDNyCFLGjGdazSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
