@@ -134,3 +134,52 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+class HomeScreen extends StatefulWidget{
+  final boards = [
+    {'name' : 'General', 'icon': Icons.forum},
+    {'name' : 'Technology', 'icon': Icons.phone},
+    {'name' : 'Games', 'icon' : Icons.gamepad},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Discussion Boards')),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(child: Text('Main Menu')), 
+            ListTile(
+              title: Text('Discussion Boards'),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              title: Text('Profile'),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => UserProfile())),
+            ),
+            ListTile(
+              title: Text('Settings'),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => UserSettings())),
+            ),
+          ],
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: boards.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: Icon(boards[index]['icon'] as IconData),
+            title: Text(boards[index]['name']!),
+            onTap: () => Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (_) => MessageScreen(boardName : boards[index]['name']!),),
+              ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+
