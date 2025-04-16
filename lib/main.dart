@@ -253,4 +253,43 @@ class MessageScreenState extends State<MessageScreen> {
   }
 }
 
+class UserProfile extends StatefulWidget{
+  final user = FirebaseAuth.instance.currentUser!; 
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(title: Text('Profile')),
+      body: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance.collection('users').doc(user.uid).get(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return CircularProgressIndicator();
+          final data = snapshot.data!;
+          return ListTile(
+            title: Text('${data['first_name']} ${data['last_name']}'),
+            subtitle: Text('Email: ${user.email}'),
+          );
+        },
+      ),
+    );
+  }
+}
 
+class UserSettings extends StatelessWidget{
+  void logout(BuildContext context) async{
+    await FirebaseAuth.instance.signOut(); 
+    Navigator.pushAndRemoveUntil(
+      context, MaterialPageRoute(builder: (_) => LoginScreen()), (route) => false
+    );
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(title: Text('Settings')),
+      body: ListTile(
+        title: Text('Logout'),
+        onTap: () => logout(context),
+      ),
+    );
+  }
+}
