@@ -182,4 +182,75 @@ class HomeScreen extends StatefulWidget{
   }
 }
 
+class MessageScreen extends StatefulWidget{
+  final String boardName;
+  MessageScreen({required this.boardName});
+
+  @override
+  State<MessageScreen> createState() => MessageScreenState(); 
+}
+
+class MessageScreenState extends State<MessageScreen> {
+  final message = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser!;
+  late final String showUserName;
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance.collection('users').doc(user.uid).get().then((doc) {
+      showUserName = '${doc['first_name']} ${doc['last_name']}';
+    });
+  }
+
+  void sendMessage() async{
+    if (message.text.trim().isEmpty) return; 
+    await FirebaseFirestore.instance.collection('message').add({
+      'text' : message.text.trim(), 
+      'timestap' : Timestamp.now(),
+      'sender' : user.email, 
+      'board' : widget.boardName,
+    });
+    message.clear();
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.boardName)),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                .collection('messages')
+                .where('board', isEqualTo: widget.boardName)
+                .orderBy('timestamp')
+                .snapshots(), 
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+                final docs = snapshot.data!.docs;
+                return ListView(
+                  children: docs
+                      .map((doc) => ListTile(
+                            title: Text(doc['text']),
+                            subtitle: Text('${doc['sender']} - ${doc['timestamp'].toDate()}'),
+                          ))
+                      .toList(),
+                );
+              },
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(child: TextField(controller: message, decoration: InputDecoration(hintText: 'Enter Message'))),
+              IconButton(icon: Icon(Icons.send), onPressed: sendMessage),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
 
