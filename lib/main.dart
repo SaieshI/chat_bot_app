@@ -74,7 +74,7 @@ class LoginScreenState extends State<LoginScreen> {
         password: password.text.trim(),
       );
     } catch (e) {
-      showError(e.toString());
+      errorMessage(e.toString());
     }
   }
 
@@ -95,8 +95,14 @@ class LoginScreenState extends State<LoginScreen> {
             'registered_at': Timestamp.now(),
           });
     } catch (e) {
-      showError(e.toString()); 
+      errorMessage(e.toString());
     }
+  }
+
+  void errorMessage(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   
