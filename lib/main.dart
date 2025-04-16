@@ -105,5 +105,32 @@ class LoginScreenState extends State<LoginScreen> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(title: Text(loggedIn ? 'Login' : 'Register')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            if (!loggedIn)
+              TextField(controller: firstName, decoration: InputDecoration(labelText: 'First Name')),
+            if (!loggedIn)
+              TextField(controller: lastName, decoration: InputDecoration(labelText: 'Last Name')),
+            TextField(controller: email, decoration: InputDecoration(labelText: 'E-Mail')),
+            TextField(controller: password, decoration: InputDecoration(labelText: 'Password'), obscureText: true),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: loggedIn ? login : makeAccount,
+              child: Text(loggedIn ? 'Login' : 'Register'),
+            )
+            TextButton(
+              onPressed: () => setState(() => loggedIn = !loggedIn),
+              child: Text(loggedIn ? 'No account? Register' : 'Have account? Login'),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }
