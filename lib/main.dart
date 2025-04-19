@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: SplashScreen(),
     );
   }
 }
@@ -63,7 +63,7 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final email = TextEditingController();
   final password = TextEditingController();
-  final loggedIn = true;
+  bool loggedIn = true;
   final firstName = TextEditingController();
   final lastName = TextEditingController();
 
@@ -123,11 +123,11 @@ class LoginScreenState extends State<LoginScreen> {
             ElevatedButton(
               onPressed: loggedIn ? login : makeAccount,
               child: Text(loggedIn ? 'Login' : 'Register'),
-            )
+            ), 
             TextButton(
               onPressed: () => setState(() => loggedIn = !loggedIn),
               child: Text(loggedIn ? 'No account? Register' : 'Have account? Login'),
-            )
+            ), 
           ],
         ),
       ),
@@ -136,6 +136,11 @@ class LoginScreenState extends State<LoginScreen> {
 }
 
 class HomeScreen extends StatefulWidget{
+  @override
+  State<HomeScreen> createState () => HomeScreenState(); 
+}
+
+class HomeScreenState extends State<HomeScreen> {
   final boards = [
     {'name' : 'General', 'icon': Icons.forum},
     {'name' : 'Technology', 'icon': Icons.phone},
@@ -170,10 +175,10 @@ class HomeScreen extends StatefulWidget{
         itemBuilder: (context, index) {
           return ListTile(
             leading: Icon(boards[index]['icon'] as IconData),
-            title: Text(boards[index]['name']!),
+            title: Text(boards[index]['name'] as String),
             onTap: () => Navigator.push(
               context, 
-              MaterialPageRoute(builder: (_) => MessageScreen(boardName : boards[index]['name']!),),
+              MaterialPageRoute(builder: (_) => MessageScreen(boardName : boards[index]['name'] as String),),
               ),
           );
         },
@@ -193,21 +198,23 @@ class MessageScreen extends StatefulWidget{
 class MessageScreenState extends State<MessageScreen> {
   final message = TextEditingController();
   final user = FirebaseAuth.instance.currentUser!;
-  late final String showUserName;
+  String showUserName = ''; 
 
   @override
   void initState() {
     super.initState();
     FirebaseFirestore.instance.collection('users').doc(user.uid).get().then((doc) {
-      showUserName = '${doc['first_name']} ${doc['last_name']}';
+      setState(() {
+        showUserName = '${doc['first_name']} ${doc['last_name']}';
+      }); 
     });
   }
 
   void sendMessage() async{
     if (message.text.trim().isEmpty) return; 
-    await FirebaseFirestore.instance.collection('message').add({
+    await FirebaseFirestore.instance.collection('messages').add({
       'text' : message.text.trim(), 
-      'timestap' : Timestamp.now(),
+      'timestamp' : Timestamp.now(),
       'sender' : user.email, 
       'board' : widget.boardName,
     });
@@ -253,7 +260,7 @@ class MessageScreenState extends State<MessageScreen> {
   }
 }
 
-class UserProfile extends StatefulWidget{
+class UserProfile extends StatelessWidget{
   final user = FirebaseAuth.instance.currentUser!; 
   @override
   Widget build(BuildContext context){
